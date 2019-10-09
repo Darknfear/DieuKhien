@@ -1,76 +1,104 @@
 import React, { Component } from 'react'
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, ProgressBarAndroid } from 'react-native';
 import ToggleSwitch from "toggle-switch-react-native"
 import styles from "./styles"
 import { conTrol, urlUP, urlDOWN, urlPAUSE } from "../../services/index"
+
+const srcGoUp = "../../assets/img/goup.png";
+const srcGoDown = "../../assets/img/godown.png";
+const srcPause = "../../assets/img/pause.png";
+const srcGoUpOff = "../../assets/img/goupoff.png";
+const srcGoDownOff = "../../assets/img/godownoff.png";
+const srcPauseOff = "../../assets/img/pauseoff.png";
 
 export default class DieuKhien extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isOn: false,
+            isUp: false,
             isPause: false,
-            isDisabled: true
+            isDown : false,
+            isDisabled: true,
+            animating : false
         }
         
     }
-    onClickButtonSwitch = () => {
+  
+    onClick = url => {
         this.setState({
-            isOn: !this.state.isOn
+            animating :true
         })
-        if (this.state.isOn == false) this.state.isDisabled = false
-        if (this.state.isOn == true) this.state.isDisabled = true
+        conTrol(url)
+        .then( res => {
+           if(res == "OK") {
+               this.setState({
+                   animating : false
+               })
+            }else {
+               
+            }
+        })
+        .catch( err =>{
+            this.setState({
+                animating : false
+            }),
+            alert(err)
+        })
     }
    
     render() {
         const { navigation } = this.props;
         const itemId = navigation.getParam('data', 'NO-IP');
+        const { isUp, isDown, isPause } = this.state;
         return (
             <View style={styles.container}>
+                <View style={styles.element}/>
                 <View style={styles.element}>
                     <TouchableOpacity
-                        disabled={this.state.isDisabled}
                         onPress={() => {
-                            conTrol(urlUP(itemId)),
-                            console.log("ip"+urlUP(itemId))
+                            this.onClick(urlUP(itemId)),
+                            this.setState({
+                                isUp : true,
+                                isPause : false,
+                                isDown : false
+                            })
                         }}>
                         <Image
                             style={styles.img}
-                            source={require("../../assets/img/goup.png")} />
+                            source={isUp == true ? require(srcGoUp) : require(srcGoUpOff)} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.element}>
                 <TouchableOpacity
-                    disabled={this.state.isDisabled}
                     onPress={() => {
+                        this.onClick(urlPAUSE(itemId)),
                         this.setState({
-                            isPause: true
-                        }),
-                        conTrol(urlUP(itemId))
+                            isPause : true,
+                            isDown : false,
+                            isUp : false
+                        })
                     }}>
                     <Image
                         style={styles.img}
-                        source={require("../../assets/img/pause.png")} />
+                        source={ isPause ? require(srcPause) : require(srcPauseOff) } />
                 </TouchableOpacity>
                 </View>
                 <View style={styles.element}>
                     <TouchableOpacity
-                        disabled={this.state.isDisabled}
-                        onPress={() => conTrol(urlUP(itemId))}>
+                        onPress={() => {
+                            this.onClick(urlDOWN(itemId)),
+                            this.setState({
+                                isUp : false,
+                                isDown : true,
+                                isPause : false
+                            })
+                        }}>
                         <Image
                             style={styles.img}
-                            source={require("../../assets/img/godown.png")} />
+                            source={isDown ? require(srcGoDown) : require(srcGoDownOff)} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.element}>
-                    <ToggleSwitch
-                        isOn={this.state.isOn}
-                        onColor="green"
-                        offColor="red"
-                        size="large"
-                        onToggle={() => this.onClickButtonSwitch()}
-                    />
-                </View>
+                <View style={styles.element}/>
             </View>
         );
     }

@@ -1,18 +1,31 @@
 export const urlUP = function (ip) {
-    return ip+":8080/PHP/up.php";
+    return "http:"+ip+":8080/PHP/up.php";
 }
 export const urlDOWN = function (ip) {
-    return ip+":8080/PHP/down.php";
+    return "http:"+ip+":8080/PHP/down.php";
 }
 export const urlPAUSE = function (ip) {
-    return ip+":8080/PHP/pause.php";
+    return "http:"+ip+":8080/PHP/off.php";
 }
 
-export const conTrol = url => {
-    return fetch(url).then( response => {
-        
+export async function conTrol(url){
+    try {
+        let response = await fetch(url);
+        let responseJSON = await response.json();
+        return responseJSON.status;
+    } catch (error) {
+        console.log(error)
     }
-    ).catch( err => alert(err))
+};
+
+export async function checkIP (url) {
+    try {
+        let response = await fetch(url);
+        let responseJSON = await response.json();
+        return responseJSON.status;
+    } catch (error) {
+        console.log("err : "+error)   
+    }
 }
 
 

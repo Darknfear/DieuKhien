@@ -13,8 +13,8 @@ const styles = StyleSheet.create({
         justifyContent : "center"
     },
     img : {
-        height : height/10,
-        width : width/6
+        height : width/4,
+        width : width/4
 
     }
 });

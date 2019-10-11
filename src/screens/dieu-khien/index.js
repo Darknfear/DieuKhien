@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { View, Image, TouchableOpacity, ProgressBarAndroid } from 'react-native';
 import ToggleSwitch from "toggle-switch-react-native"
 import styles from "./styles"
-import { conTrol, urlUP, urlDOWN, urlPAUSE } from "../../services/index"
+import { conTrol, urlUP, urlDOWN, urlPAUSE, urlModeAuto } from "../../services/index"
+import { thisExpression } from '@babel/types';
 
 const srcGoUp = "../../assets/img/goup.png";
 const srcGoDown = "../../assets/img/godown.png";
@@ -19,7 +20,8 @@ export default class DieuKhien extends Component {
             isPause: false,
             isDown : false,
             isDisabled: true,
-            animating : false
+            animating : false,
+            onToggle : false
         }
         
     }
@@ -45,16 +47,42 @@ export default class DieuKhien extends Component {
             alert(err)
         })
     }
+
+    onClickToggle = url => {
+        this.setState({
+            onToggle : ! this.state.onToggle
+        })
+        if(this.state.onToggle == false) {
+            this.setState({
+                isDisabled : false,
+                isPause : true
+            }),
+            this.onClick(url),
+            console.log("when state of onToggle is false "+this.state.onToggle)
+        }
+        if(this.state.onToggle == true) {
+            this.setState({
+                isDisabled : true,
+                isUp : false,
+                isDown : false,
+                isPause : false
+            }),
+            this.onClick(url),
+            console.log("when state of onToggle is true "+this.state.onToggle)
+        }
+    }
    
     render() {
         const { navigation } = this.props;
         const itemId = navigation.getParam('data', 'NO-IP');
-        const { isUp, isDown, isPause } = this.state;
+        const { isUp, isDown, isPause, onToggle, isDisabled } = this.state;
+        console.log(isDisabled,onToggle)
         return (
             <View style={styles.container}>
                 <View style={styles.element}/>
                 <View style={styles.element}>
                     <TouchableOpacity
+                        disabled={isDisabled}
                         onPress={() => {
                             this.onClick(urlUP(itemId)),
                             this.setState({
@@ -70,6 +98,7 @@ export default class DieuKhien extends Component {
                 </View>
                 <View style={styles.element}>
                 <TouchableOpacity
+                    disabled={isDisabled}
                     onPress={() => {
                         this.onClick(urlPAUSE(itemId)),
                         this.setState({
@@ -85,6 +114,7 @@ export default class DieuKhien extends Component {
                 </View>
                 <View style={styles.element}>
                     <TouchableOpacity
+                        disabled={isDisabled}
                         onPress={() => {
                             this.onClick(urlDOWN(itemId)),
                             this.setState({
@@ -98,7 +128,16 @@ export default class DieuKhien extends Component {
                             source={isDown ? require(srcGoDown) : require(srcGoDownOff)} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.element}/>
+                <View style={styles.element}>
+                    <ToggleSwitch 
+                        isOn={onToggle}
+                        onColor="green"
+                        offColor="red"
+                        label="Auto"
+                        labelStyle={{ color: "black", fontWeight: "bold" }}
+                        size="large"
+                        onToggle={() => onToggle ? this.onClickToggle(urlModeAuto(itemId)) : this.onClickToggle(urlPAUSE(itemId))}/>
+                </View>
             </View>
         );
     }

@@ -20,6 +20,7 @@ export default class NhapIp extends Component{
                 this.setState({
                     animating : false
                 })
+                console.log(response)
                 alert("connect success"),
                 this.props.navigation.navigate("dieukhien",{"data" : this.state.ip})
             }else {
@@ -39,7 +40,8 @@ export default class NhapIp extends Component{
     }
 
     render(){
-        const { ip } = this.state
+        const { ip } = this.state;
+        console.log(ip)
         return(
             <View style={styles.container}>
                 <ProgressBarAndroid styleAttr="Horizontal" animating={this.state.animating}/>

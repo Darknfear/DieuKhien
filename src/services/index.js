@@ -7,6 +7,12 @@ export const urlDOWN = function (ip) {
 export const urlPAUSE = function (ip) {
     return "http:"+ip+":8080/PHP/off.php";
 }
+export const urlModeAuto = function (ip) {
+    return "http:"+ip+":8080/PHP/auto.php";
+}
+export const urlIP = function (ip) {
+    return "http:"+ip+":8080/";
+}
 
 export async function conTrol(url){
     try {
